@@ -1,14 +1,7 @@
-/** /
-#include <stdio.h>
+#include "FlatMap.h"
 
-#include "Vector.h"
 
-template<class Index,class Value>
-struct Item {
-	Index P = 0;
-	Value V= 0;
-};
-template<class Idx,class Value>
+template<class Idx, class Value>
 Item<Idx, Value> ConstructItem(const Idx& I, const Value& V) {
 	Item<Idx, Value> It;
 	It, P = I;
@@ -20,22 +13,15 @@ template<class T>
 bool Free(const T& In) {
 	return true;
 }
-template<class Idx,class Value>
-bool Free(const  Item<Idx,Value>& In) {
+template<class Idx, class Value>
+bool Free(const  Item<Idx, Value>& In) {
 	Free(In.P);
 	Free(In.V);
 	return true;
 }
-template<class Idx,class Value>
-struct FlatMap {
-	Vector<Item<Idx, Value>> V;
-	Idx I = 0;
 
-//	typedef Idx Indexer;
-//	typedef Value Valued;
-};
 
-template<class Idx,class Value>
+template<class Idx, class Value>
 FlatMap<Item<Idx, Value>> ConstructFlatMap(size_t Capacity) {
 	FlatMap<Item<Idx, Item>> F;
 	F.V = ConstructVector<Item<Idx, Item>>(Capacity);
@@ -43,35 +29,35 @@ FlatMap<Item<Idx, Value>> ConstructFlatMap(size_t Capacity) {
 	return F;
 }
 
-template<class Idx,class Value>
+template<class Idx, class Value>
 bool Free(FlatMap<Item<Idx, Value>>& In) {
 	Free(In.V);
 	In.I = 0;
 }
-template<class Idx,class Value>
-bool Push(FlatMap<Item<Idx, Value>>& In,const Value& II) {
+template<class Idx, class Value>
+bool Push(FlatMap<Item<Idx, Value>>& In, const Value& II) {
 	Item<Idx, Value> X;
 	X.P = In.I++;
 	X.V = II;
 
 	return Push(In.V, X);
 }
-template<class Idx,class Value>
+template<class Idx, class Value>
 bool Pop(FlatMap<Item<Idx, Value> >& In) {
 	return Pop(In);
 }
-template<class Idx,class Value>
-Item<Idx, Value>* Index(FlatMap<Item<Idx, Value>>& In,const size_t& P) {
+template<class Idx, class Value>
+ Value* Index(FlatMap<Item<Idx, Value>>& In, const size_t& P) {
 	for (Idx i = 0; i < In.I; i++) {
 		for (size_t j = 0; j < Size(In.V); j++) {
 			if (Index(In.V, j) == NULL) { break; }
-			if (Index(In.V, j)->P == i) { return Index(In.V, j); }
+			if (Index(In.V, j)->P == i) { return &(Index(In.V, j)->V); }
 		}
 	}
 
 	return NULL;
 }
-template<class Idx,class Value>
+template<class Idx, class Value>
 Value* Find(FlatMap<Item<Idx, Value>>& In, const Idx& P) {
 	for (Item<Idx, Value>::Indexer i = 0; i < In.I; i++) {
 		if (Index(In.V, i) == NULL) { return NULL; }
@@ -81,36 +67,36 @@ Value* Find(FlatMap<Item<Idx, Value>>& In, const Idx& P) {
 	return NULL;
 
 }
-template<class Idx,class Value>
+template<class Idx, class Value>
 bool Resize(FlatMap<Item<Idx, Value>>& In, const size_t& S) {
 	return Resize(In.V, S);
 }
-template<class Idx,class Value>
+template<class Idx, class Value>
 bool ChangeCapacity(FlatMap<Item<Idx, Value>>& In, const size_t& S) {
 	return ChangeCapacity(In.V, S);
 }
-template<class Idx,class Value>
+template<class Idx, class Value>
 bool Clear(FlatMap<Item<Idx, Value>>& In) {
 	return Clear(In.V);
 }
-template<class Idx,class Value>
+template<class Idx, class Value>
 size_t Size(FlatMap<Item<Idx, Value>>& In) {
 	return Size(In.V);
 }
-template<class Idx,class Value>
+template<class Idx, class Value>
 bool IsEmpty(FlatMap<Item<Idx, Value>>& In) {
 	return IsEmpty(In);
 }
-template<class Idx,class Value>
+template<class Idx, class Value>
 Idx LastIndex(FlatMap<Item<Idx, Value>>& In) {
-	return In,I;
+	return In, I;
 }
- template<class Idx,class Value>
+template<class Idx, class Value>
 size_t Capacity(FlatMap<Item<Idx, Value>>& In) {
 	return Capacity(In.V);
 }
-template<class Idx,class Value>
-size_t Drop(FlatMap<Item<Idx, Value>>& In,Idx P){
+template<class Idx, class Value>
+size_t Drop(FlatMap<Item<Idx, Value>>& In, Idx P) {
 	if (LastIndex(In) <= P) { return false; }
 
 	size_t X = 0;
@@ -121,20 +107,20 @@ size_t Drop(FlatMap<Item<Idx, Value>>& In,Idx P){
 	}
 	for (size_t i = 0; i < Size(In.V); i++) {
 		if (Index(In, i) == NULL) { break; }
-		if (Index(In, i+1) == NULL) { break; }
+		if (Index(In, i + 1) == NULL) { break; }
 		(*Index(In, i)) = (*Index(In, i + 1);
 	}
 	In.V.Use--;
 	return true;
 }
-template<class Idx,class Value>
-Value Back(FlatMap<Item<Idx, Value>>& In){
+template<class Idx, class Value>
+Value& Back(FlatMap<Item<Idx, Value>>& In) {
 
-	return Back(In.V);
+	return Back(In.V).V;
 }
-template<class Idx,class Value>
+template<class Idx, class Value>
 FlatMap<Item<Idx, Value>> Duplicate(FlatMap<Item<Idx, Value>> In) {
-	Vector<T> M = Duplicate<Item<Idx, Value>(In.V);
+	Vector<T> M = Duplicate < Item<Idx, Value>(In.V);
 	Idx I = In.I;
 	FlatMap<Item<Idx, Value>> F;
 
@@ -142,17 +128,4 @@ FlatMap<Item<Idx, Value>> Duplicate(FlatMap<Item<Idx, Value>> In) {
 	F.I = I;
 
 	return F;
-}
-/**/
-
-#include "FlatMap.h"
-
-int main() {
-	Item<int, char> I = ConstructItem<int,char>(16,7);
-	FlatMap<int, char> F = ConstructFlatMap<Item<int, char>>(16);
-	Push(F, I);
-	Free(F);
-
-	return 0;
-
 }
